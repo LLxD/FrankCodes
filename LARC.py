@@ -142,12 +142,28 @@ def curva_direcao(x, tamanho_curva):
     elif x == 2:
         curva_esquerdacom2(tamanho_curva)
 
+#funcao que gera os intervalos de cor lidas em rgb, continuar para maior precisao na leitura de cores
+def cor_intervalo(cor):
+    cores_lista0=[]
+    cores_lista1=[]
+    cores_lista2=[]
+    for i in range(5):
+        cor = list(sensor1.rgb)
+        cores_lista0.append(cor[0])
+        cores_lista1.append(cor[1])
+        cores_lista2.append(cor[2])
+    intervalomaior = (max(cores_lista0)+(max(cores_lista0) - min(cores_lista0)) ,max(cores_lista1)+(max(cores_lista1) - min(cores_lista1)) , max(cores_lista2)+(max(cores_lista2) - min(cores_lista2)))
+    intervalomenor = (min(cores_lista0)+(max(cores_lista0) - min(cores_lista0)) ,min(cores_lista1)+(max(cores_lista1) - min(cores_lista1)) , min(cores_lista2)+(max(cores_lista2) - min(cores_lista2)))
+    intervaloamplitude = (max(cores_lista0) - min(cores_lista0), max(cores_lista1) - min(cores_lista1) , max(cores_lista2) - min(cores_lista2))
+    #criar modulo de comparacao entre intervalos obtidos e cores
 """ EXECUCAO """
 
 velocidade = 900
 tamanho_curva_2m = 300
 
 cores_circuito = []
+#variavel criada para receber a associacao entre cores e direcoes
+cor_direcao = {}
 direcoes_disponiveis = [0, 1, 2]
 
 sensor1.calibrate_white()
@@ -162,7 +178,8 @@ cor_atual = sensor1.color
 time.sleep(1)
 
 cores_circuito.append(cor_atual)
-for direcao in range(3):
+
+for direcao in direcoes_disponiveis:
     #Realiza esse laco p/ cada direcao, de 0 a 2
     curva_direcao(direcao, tamanho_curva_2m)
     ajuste_direto(1)
@@ -193,5 +210,19 @@ for direcao in range(3):
         ajuste_direto(-1)
         continue
     else: #se ler qualquer outra cor
+        #associa a direcao a cor atual
+        cor_direcao[cor_atual] = direcao
+        #remove das direcoes possiveis a direcao atual
+        direcoes_disponiveis.remove(direcao)
+        break
+    #continuar a andar
+
+'''
+se a cor ja existir na cor_direcao: adotar a direcao como a associada previamente, caso nao, testar.
+if cor_atual in cor_direcao:
+    direcao = cor_direcao[cor_atual]
+else
+    teste
+    '''
         
         
